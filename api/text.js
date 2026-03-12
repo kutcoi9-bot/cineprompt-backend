@@ -8,19 +8,21 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
 
-  // 2. TANGANI PREFLIGHT DARI BROWSER (Agar mendapat status OK/200)
+  // 2. TANGANI PREFLIGHT DARI BROWSER (Mencegah error CORS)
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // 3. KODE ASLI KAMU (Baru dicek POST di sini)
+  // 3. CEK METODE POST
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, message: 'Method not allowed' });
   }
 
   try {
     const { prompt } = req.body || {};
+    
+    // Mengambil API Key dengan aman dari Dashboard Vercel
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
