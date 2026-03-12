@@ -15,23 +15,25 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
 
-  // 2. TANGANI PREFLIGHT DARI BROWSER
+  // 2. TANGANI PREFLIGHT DARI BROWSER (Mencegah error CORS)
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
-  // 3. KODE ASLI KAMU
+  // 3. CEK METODE POST
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, message: 'Method not allowed' });
   }
 
   try {
     const { prompt, aspectRatio = '1:1' } = req.body || {};
-    const apiKey = process.env.GEMINI_API_KEY;
+    
+    // Mengambil API Key dengan aman dari Dashboard Vercel
+    const apiKey = process.env.GEMINI_API_KEY; 
 
     if (!apiKey) {
-      return res.status(500).json({ ok: false, message: 'GEMINI_API_KEY belum diatur di Vercel' });
+      return res.status(500).json({ ok: false, message: 'GEMINI_API_KEY belum dikonfigurasi di Vercel.' });
     }
 
     if (!prompt || !String(prompt).trim()) {
