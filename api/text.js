@@ -1,4 +1,20 @@
 export default async function handler(req, res) {
+  // 1. PENGATURAN CORS WAJIB (Harus paling atas)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  // 2. TANGANI PREFLIGHT DARI BROWSER (Agar mendapat status OK/200)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // 3. KODE ASLI KAMU (Baru dicek POST di sini)
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, message: 'Method not allowed' });
   }
